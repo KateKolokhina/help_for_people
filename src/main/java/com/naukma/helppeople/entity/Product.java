@@ -1,11 +1,10 @@
 package com.naukma.helppeople.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.util.Set;
 
 @Entity
 @Data

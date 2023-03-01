@@ -1,18 +1,19 @@
 package com.naukma.helppeople.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.naukma.helppeople.entity.dto.UserDTO;
 import lombok.*;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -47,4 +48,20 @@ public class User implements Serializable {
     @Size(max = 255)
     @Column(name = "role", nullable = false, length = 255)
     private String role;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "id")
+    private List<HelpRequest> requests = new ArrayList<>();
+
+
+    public User changeUser(UserDTO dto) {
+
+        this.login = dto.getLogin();
+        this.pib = dto.getPib();
+        this.phone = dto.getPhone();
+
+        if (!dto.getPassword().isEmpty()) {
+            this.password = dto.getPassword();
+        }
+        return this;
+    }
 }

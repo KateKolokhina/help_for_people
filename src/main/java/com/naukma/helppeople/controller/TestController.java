@@ -8,14 +8,11 @@ import com.naukma.helppeople.repository.ProductRepository;
 import com.naukma.helppeople.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class TestController {
@@ -28,17 +25,6 @@ public class TestController {
     @Autowired
     ProductRepository productRepository;
 
-
-    @GetMapping("/test1")
-    @ResponseBody
-    public String test1() {
-        User user = User.builder().login("usrlgn").password("psw000").phone("097222").pib("A.N.N").role("Client").build();
-
-        userRepository.save(user);
-
-        return "<html><body><h2>"+userRepository.findById(user.getId())+"</h2></body></html>";
-    }
-
     @GetMapping("/test2")
     @ResponseBody
     public String test2() {
@@ -50,7 +36,11 @@ public class TestController {
 
 
         categoryRepository.save(category);
-        productRepository.saveAll(List.of(product1, product2, product3));
+        List<Product> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+        products.add(product3);
+        productRepository.saveAll(products);
 
         StringBuilder html = new StringBuilder();
         html.append("<html><body><h2>");
