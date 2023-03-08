@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>SHH | Заява </title>
+    <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+            crossorigin="anonymous"
+    />
+    <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+            crossorigin="anonymous"
+    />
+</head>
+
+<body style="padding-top: 100px">
+<div th:replace="navbar :: navbar">
+</div>
+
+<main role="main">
+    <div class="container-md">
+        <div class="row justify-content-between">
+            <div class="col-md-4">
+                <a class="btn btn-primary mx-4" href="/request/all" role="button">Усі заяви</a>
+                <a class="btn btn-warning" th:href="'/request/'+${request.getId()}" role="button"
+                   th:if="${!request.getStatus().equals('CLOSED')}"> Редагувати</a>
+            </div>
+
+            <div class="col-mx-4"
+                 th:if="${currentUser != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}">
+                <a class="btn btn-info mx-4"
+                   th:if="${request.getStatus().equals('OPEN')}"
+                   th:href="'/request/'+${request.getId()}+'/progress?adminLogin='+${userId}"
+                   role="button">У роботі</a>
+                <a class="btn btn-danger mx-4"
+                   th:if="${!request.getStatus().equals('CLOSED')}"
+                   th:href="'/request/'+${request.getId()}+'/end?adminLogin='+${userId}" role="button"
+                >Завершити</a>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card w-100  mx-4 my-4">
+                    <div class="card-header bg-light text-info">
+                        <h4 class="text-center" th:text="${'Заява №: '+request.getId()}"></h4>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex flex-column justify-content-between mx-2">
+                            <p th:if="${ currentUser != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}"
+                               th:text="${'Замовник: '+ request.getUser().getPib() }"></p>
+                            <p th:if="${currentUser != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}"
+                               th:text="${'Контактний телефон: '+ request.getUser().getPhone() }"></p>
+
+                            <p th:text="${'Дата створення: '+ request.getDateCreate() }"></p>
+                            <p th:if="${request.getDateClosed() != null}"
+                               th:text="${'Дата закриття: '+ request.getDateClosed() }"></p>
+
+                            <p th:text="${'Примітки: '+ request.getComment() }"></p>
+
+                            <p th:text="${'Примітки від адміністратора: '+ request.getAdminComment() }"></p>
+
+                            <p th:if="${request.getStatus().equals('OPEN')}">Статус - Створено </p>
+                            <p th:if="${request.getStatus().equals('IN_PROGRESS')}">Статус - В роботі</p>
+                            <p th:if="${request.getStatus().equals('CLOSED')}">Статус - Завершено</p>
+
+                            <p th:if="${currentUser != null && request.getAdmin() == null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()) }"
+                               th:text="${'Востаннє змінено адміністратором: '}"></p>
+
+                            <p th:if="${currentUser != null && request.getAdmin() != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()) }"
+                               th:text="${'Востаннє змінено адміністратором: '+ request.getAdmin().getLogin()}"></p>
+
+                        </div>
+
+                        <div th:if="${lines.size() == 0 }">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span th:text="${'Заявка порожня'}"></span>
+                            </li>
+                        </div>
+                        <table class="table" th:if="${lines.size() != 0 }">
+                            <thead>
+                            <tr>
+                                <th th:if="${!request.getStatus().equals('CLOSED')}"></th>
+                                <th>Id</th>
+                                <th>Стать</th>
+                                <th>Категорія</th>
+                                <th>Сезон</th>
+                                <th>Розмір</th>
+                                <th>Кількість</th>
+                                <th th:if="${currentUser != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()) }">
+                                    На складі
+                                </th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <th:block th:each="line : ${lines}">
+                                <tr>
+                                    <td th:if="${!request.getStatus().equals('CLOSED')}">
+                                        <form action="#"
+                                              th:action="@{'/request/products?'(id=${request.getId()},productId= ${line.getProduct().getId()})}"
+                                              th:method="delete">
+                                            <input type="hidden" name="_method" value="delete"/>
+                                            <button class="btn btn-danger btn-sm" type="submit" id="submitButton1">
+                                                Видалити
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td th:text="${line.getProduct().getId()}"/>
+
+                                    <td th:if="${line.getProduct().getGender().equals('F')}" th:text="Жіноч"/>
+                                    <td th:if="${line.getProduct().getGender().equals('M')}" th:text="Чолов"/>
+                                    <td th:if="${line.getProduct().getGender().equals('K')}" th:text="Дитяч"/>
+
+                                    <td th:text="${line.getProduct().getCategory().getName()}"/>
+
+                                    <td th:if="${ line.getProduct().getSeason() == null}" th:text="-----"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null && line.getProduct().getSeason().equals('Winter')}" th:text="Зима"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Autumn')}" th:text="Осінь"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Summer')}" th:text="Літо"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Spring')}" th:text="Весна"/>
+
+                                    <td th:text="${line.getProduct().getSize()}"/>
+
+                                    <td th:text="${line.getAmount()}+' шт.'"/>
+
+                                    <td th:if="${currentUser != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()) }"
+                                        th:text="${line.getProduct().getTotalCount()}+' шт.'"/>
+
+                                </tr>
+                            </th:block>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<script
+        src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+        crossorigin="anonymous"
+></script>
+
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.1/cjs/popper.min.js"
+        integrity="sha256-T3bYsIPyOLpEfeZOX4M7J59ZoDMzuYFUsPiSN3Xcc2M="
+        crossorigin="anonymous"
+></script>
+
+<script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"
+></script>
+</body>
+</html>

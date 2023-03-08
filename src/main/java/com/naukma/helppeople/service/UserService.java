@@ -18,6 +18,16 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public User findUserById(Long id) {
+        if (userRepository.findUserById(id).isPresent()) {
+            log.info("found by id  -> id:" + id);
+            return userRepository.findUserById(id).get();
+        } else {
+            return null;
+        }
+    }
+
+
     public User findUserByLogin(String login) {
         if (userRepository.findByLogin(login).isPresent()) {
             log.info("found by login  -> login:" + login);

@@ -35,4 +35,9 @@ public class HelpRequestLine {
     @PositiveOrZero
     @Column(name = "total_count", nullable = false)
     private Integer amount;
+
+    public Long getProductId() {
+        return product.getId();
+    }
+
 }

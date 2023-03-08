@@ -5,8 +5,12 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,14 +44,19 @@ public class HelpRequest {
     private String clientComment;
 
     @Column(name = "date_closed")
-    private Date dateClosed;
+    private LocalDate dateClosed;
 
     @NotNull
     @Column(name = "date_create", nullable = false)
-    private Date dateCreate;
+    private LocalDate dateCreate;
 
     @NotBlank
     @Size(max = 255)
-    @Column(name = "status", nullable = false, length = 255)
-    private String status;
+    @Pattern(regexp = "OPEN|IN_PROGRESS|CLOSED")
+    private String status = "OPEN";
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "request_id")
+    private List<HelpRequestLine> requestLinesList = new ArrayList<>();
+
 }

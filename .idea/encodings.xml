@@ -3,5 +3,15 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/donate.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/help_first_time.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/index.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/navbar.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/request_all.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/request_create.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/request_edit.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/request_products.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/user.html" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/where_find.html" charset="windows-1251" />
   </component>
 </project>

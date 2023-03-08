@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>SHH | Заява</title>
+    <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+            crossorigin="anonymous"
+    />
+    <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+            crossorigin="anonymous"
+    />
+</head>
+
+<body style="padding-top: 100px">
+<div th:replace="navbar :: navbar">
+</div>
+
+<main role="main">
+    <div class="container-md">
+        <div class="row justify-content-between">
+            <div class="col-md-4">
+                <a class="btn btn-primary mx-4" href="/request/all" role="button">Усі заяви</a>
+                <a class="btn btn-primary" th:href="'/request/'+${request.getId()}+'/products'" role="button">Назад</a>
+            </div>
+            <div class="col-mx- 4"
+                 th:if="${currentUser != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}">
+                <a class="btn btn-info mx-4"
+                   th:if="${request.getStatus().equals('OPEN')}"
+                   th:href="'/request/'+${request.getId()}+'/progress?adminLogin='+${userId}"
+                   role="button">У роботі</a>
+                <a class="btn btn-danger mx-4"
+                   th:if="${!request.getStatus().equals('CLOSED')}"
+                   th:href="'/request/'+${request.getId()}+'/end?adminLogin='+${userId}" role="button">Завершити</a>
+            </div>
+            <div class="col-md-12">
+                <div class="card w-100  mx-4 my-4">
+                    <div class="card-header bg-light text-info">
+                        <h4 class="text-center" th:text="${'Заява №: '+request.getId()}"></h4>
+                    </div>
+                    <div class="card-body">
+                        <form class="my-2" th:action="@{'/request/info?'(id=${request.getId()},adminLogin=${userId})}"
+                              th:object="${request}"
+                              th:method="put">
+                            <div class="d-flex flex-column justify-content-between">
+                                <p th:if="${'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}"
+                                   th:text="${'Замовник: '+ request.getUser().getPib() }"></p>
+                                <p th:if="${'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}"
+                                   th:text="${'Контактний телефон: '+ request.getUser().getPhone() }"></p>
+
+                                <p th:text="${'Дата створення: '+ request.getDateCreate() }"></p>
+                                <p th:if="${request.getDateClosed() != null}"
+                                   th:text="${'Дата закриття: '+ request.getDateClosed() }"></p>
+
+                                <div th:if="${'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}">
+                                    <p th:text="${'Примітки: '+ request.getComment() }"></p>
+                                    <input type="hidden" name="comment" th:field="*{comment}"
+                                           th:value="${request.getComment()}"/>
+                                </div>
+
+                                <div th:if="${'USER'.equals(currentUser.getAuthorities().toArray()[0].toString())}"
+                                     class="input-group my-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Примітки: </span>
+                                    </div>
+                                    <textarea class="form-control" aria-label="With textarea"
+                                              name="comment" th:text="${request.getComment()}"></textarea>
+                                </div>
+
+                                <div th:if="${'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}"
+                                     class="input-group my-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Примітки від адміністратора:</span>
+                                    </div>
+                                    <textarea class="form-control" aria-label="With textarea"
+                                              name="adminComment" th:text="${request.getAdminComment()}"></textarea>
+                                </div>
+
+                                <p th:if="${request.getAdmin() != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()) }"
+                                   th:text="${'Востаннє змінено адміністратором:'+ request.getAdmin().getLogin()}"></p>
+
+                                <p th:if="${request.getAdmin() == null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()) }"
+                                   th:text="${'Востаннє змінено адміністратором:' }"></p>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col my-2">
+                                    <button type="submit" class="btn btn-info">Зберегти</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <h4>Додати продукт</h4>
+                        <form name="add" th:action="@{'/request/'+${request.getId()}+'/add/product'}" th:method="post"
+                              th:object="${addProduct}" class="my-4"
+                              onsubmit="return validate(this);"
+                              th:readonly="${request.getStatus().equals('CLOSED')}">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">Продукт</label>
+                                </div>
+                                <select class="custom-select" th:field="*{id}" id="inputGroupSelect01"
+                                        required>
+                                    <option value="null" selected>Оберіть...</option>
+
+                                    <th:block th:each="product : ${products}">
+                                        <option th:if="${product.getSeasonUa() == null}"
+                                                th:id="${product.getTotalCount()}"
+                                                th:value="${product.getId()}"
+                                                th:text="${product.getName()}"></option>
+
+                                        <option th:if="${ product.getSeasonUa() != null}"
+                                                th:id="${product.getTotalCount()}"
+                                                th:value="${product.getId()}"
+                                                th:text="${product.getName()}+' | '+${product.getSeasonUa()} "></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Кількість</span>
+                                </div>
+                                <input id="addTest" type="number" class="form-control" aria-describedby="basic-addon1"
+                                       min="1" th:field="*{amount}" required>
+                            </div>
+                            <div class="row">
+                                <div class="col my-2">
+                                    <button type="submit" class="btn btn-info">Додати</button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <div th:if="${properties_wrapper.getProperties().size() == 0 }">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span th:text="${'Замовлення порожнє'}"></span>
+                            </li>
+                        </div>
+
+                        <form action="#" th:method="post"
+                              th:if="${properties_wrapper.getProperties().size() != 0 }"
+                              th:action="@{'/request/'+${request.getId()}}"
+                              th:object="${properties_wrapper}"
+                              th:readonly="${request.getStatus().equals('CLOSED')}">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Стать</th>
+                                    <th>Категорія</th>
+                                    <th>Сезон</th>
+                                    <th>Розмір</th>
+                                    <th>Кількість</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="propertyItem,status : ${properties_wrapper.properties}">
+                                    <input type="hidden" th:value="${propertyItem.id}"
+                                           th:field="*{properties[__${status.index}__].id}">
+
+                                    <td th:text="${propertyItem.id}"/>
+
+                                    <td th:if="${propertyItem.gender.equals('F')}" th:text="Жіноч"/>
+                                    <td th:if="${propertyItem.gender.equals('M')}" th:text="Чолов"/>
+                                    <td th:if="${propertyItem.gender.equals('K')}" th:text="Дитяч"/>
+
+                                    <td th:text="${propertyItem.category}"/>
+
+                                    <td th:if="${ line.getProduct().getSeason() == null}" th:text="-----"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null && line.getProduct().getSeason().equals('Winter')}"
+                                        th:text="Зима"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Autumn')}"
+                                        th:text="Осінь"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Summer')}"
+                                        th:text="Літо"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Spring')}"
+                                        th:text="Весна"/>
+
+                                    <td th:if="${propertyItem.season ==null}" th:text="----"
+                                        th:value="*{properties[__${status.index}__].season}"/>
+                                    <td th:if="${propertyItem.season !=null && propertyItem.season.equals('Winter')}"
+                                        th:text="Зима"
+                                        th:value="*{properties[__${status.index}__].season}"/>
+                                    <td th:if="${propertyItem.season !=null &&  propertyItem.season.equals('Autumn')}"
+                                        th:text="Осінь"
+                                        th:value="*{properties[__${status.index}__].season}"/>
+                                    <td th:if="${propertyItem.season !=null && propertyItem.season.equals('Summer')}"
+                                        th:text="Літо"
+                                        th:value="*{properties[__${status.index}__].season}"/>
+                                    <td th:if="${propertyItem.season !=null && propertyItem.season.equals('Spring')}"
+                                        th:text="Весна"
+                                        th:value="*{properties[__${status.index}__].season}"/>
+
+                                    <td th:text="${propertyItem.size}"/>
+
+                                    <td>
+                                        <input type="number" class="form-control" aria-describedby="basic-addon1"
+                                               th:id="${propertyItem.id}+'amount'"
+                                               min="1" th:max="${propertyItem.totalCount}"
+                                               th:field="*{properties[__${status.index}__].amount}">
+                                    </td>
+
+                                    <td th:if="${request.getAdmin() == null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()) }"
+                                        th:text="${propertyItem.totalCount}+' шт.'"/>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <button type="submit" class="btn btn-warning">Зберегти</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    function validate(form) {
+        const amount = document.querySelector('#addTest').value;
+        const select = form.querySelector('select[name="id"]');
+        console.log('000', select);
+        const selectText = select.querySelector('option:checked').textContent;
+        console.log('111', selectText);
+        const selectOption = select.querySelector('option:checked').id;
+        console.log('222', selectOption);
+        if (amount > selectOption) {
+            alert('Ви обрали багато товару: " ' + selectText + ' ". \n На складі наявно лише ' + selectOption + ' шт.');
+            return false;
+        }
+    }
+</script>
+<script
+        src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+        crossorigin="anonymous"
+></script>
+
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.1/cjs/popper.min.js"
+        integrity="sha256-T3bYsIPyOLpEfeZOX4M7J59ZoDMzuYFUsPiSN3Xcc2M="
+        crossorigin="anonymous"
+></script>
+
+<script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"
+></script>
+</body>
+</html>
