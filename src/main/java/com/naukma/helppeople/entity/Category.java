@@ -1,38 +1,43 @@
 package com.naukma.helppeople.entity;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@Builder
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Table(name = "categories")
+@Table(name = "category")
 public class Category implements Serializable {
     @Id
+    @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "name", nullable = false, length = 255)
+    @NotNull
+    @Column(unique = true, nullable = false)
     private String name;
 
+    @NotNull
     @NotBlank
-    @Size(max = 255)
-    @Column(name = "type", nullable = false, length = 255)
+    @Column(nullable = false)
     private String type;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "id")
+    private List<Product> products = new ArrayList<>();
+
+    public boolean isSeasonIsNeed() {
+        return seasonIsNeed;
+    }
+
     @NotNull
-    @Column(name = "season_is_need", nullable = false)
-    private Boolean seasonIsNeed;
+    @Column(nullable = false)
+    private boolean seasonIsNeed;
+
 }

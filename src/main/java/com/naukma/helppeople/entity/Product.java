@@ -1,52 +1,61 @@
 package com.naukma.helppeople.entity;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 @Entity
 @Data
-@Getter
-@Setter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Table(name = "products")
+@Table(name = "product")
 public class Product implements Serializable {
+
     @Id
+    @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "id")
-    private Category category;
-
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "gender", nullable = false, length = 255)
-    private String gender;
-
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "name", nullable = false, length = 255)
+    @Column(nullable = false)
     private String name;
 
-    @Size(max = 255)
-    @Column(name = "season", length = 255)
+    @Column(nullable = false)
+    @Pattern(regexp = "F|M|K")
+    private String gender;
+
+    @Pattern(regexp = "Autumn|Winter|Spring|Summer")
     private String season;
 
-    @NotNull
-    @Positive
-    @Column(name = "size", nullable = false)
+    @Column(nullable = false)
     private Integer size;
 
+    @Column(nullable = false)
     @NotNull
-    @PositiveOrZero
-    @Column(name = "total_count", nullable = false)
+    @Min(0)
     private Integer totalCount;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    public String getSeasonUa() {
+        if (this.season == null) {
+            return null;
+        }
+        switch (this.season) {
+            case "Spring":
+                return "Весна";
+            case "Autumn":
+                return "Осінь";
+            case "Winter":
+                return "Зима";
+            case "Summer":
+                return "Літо";
+        }
+        return "";
+    }
 }

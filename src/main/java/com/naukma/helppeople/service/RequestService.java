@@ -1,17 +1,19 @@
 package com.naukma.helppeople.service;
 
-import com.naukma.helppeople.entity.HelpRequest;
-import com.naukma.helppeople.entity.HelpRequestLine;
+import antlr.StringUtils;
 import com.naukma.helppeople.entity.Product;
 import com.naukma.helppeople.entity.User;
 import com.naukma.helppeople.entity.dto.RequestInfoDTO;
 import com.naukma.helppeople.entity.dto.RequestLineDTO;
+import com.naukma.helppeople.entity.request.Request;
+import com.naukma.helppeople.entity.request.RequestLine;
+import com.naukma.helppeople.entity.request.RequestLineId;
 import com.naukma.helppeople.exceptionHandlers.exceptions.InvalidData;
 import com.naukma.helppeople.exceptionHandlers.exceptions.ProductNotFoundException;
 import com.naukma.helppeople.exceptionHandlers.exceptions.RequestNotFoundException;
-import com.naukma.helppeople.repository.HelpRequestLineRepository;
-import com.naukma.helppeople.repository.HelpRequestRepository;
 import com.naukma.helppeople.repository.ProductRepository;
+import com.naukma.helppeople.repository.RequestLineRepository;
+import com.naukma.helppeople.repository.RequestRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -30,7 +32,7 @@ public class RequestService {
     private ProductRepository productRepository;
 
     @Autowired
-    private HelpRequestLineRepository requestLineRepository;
+    private RequestLineRepository requestLineRepository;
 
     @Autowired
     private UserService userService;
@@ -38,17 +40,17 @@ public class RequestService {
     private static List<String> sortParams = Arrays.asList("id", "user", "dateCreate", "status");
 
     @Autowired
-    private HelpRequestRepository requestRepository;
+    private RequestRepository requestRepository;
 
-    public List<HelpRequest> getAllRequests(String sortParam, String sortType, Long userId) {
+    public List<Request> getAllRequests(String sortParam, String sortType, Long userId) {
         if (sortParam == null && sortType == null) {
             if (userId == null) {
-                List<HelpRequest> res = new ArrayList<>();
-                Iterable<HelpRequest> fromDB = requestRepository.findAll();
+                List<Request> res = new ArrayList<>();
+                Iterable<Request> fromDB = requestRepository.findAll();
                 fromDB.iterator().forEachRemaining(res::add);
                 return res;
             } else
-                return requestRepository.findAllByClient_Id(userId);
+                return requestRepository.findAllByUserId(userId);
         }
         if (sortParam != null && sortType == null)
             sortType = "ASC";
@@ -57,10 +59,10 @@ public class RequestService {
         }
         if (sortType.equals("ASC") || sortType.equals("DESC")) {
             if (userId != null)
-                return requestRepository.findAllByClient_Id(userId, Sort.by(Sort.Direction.valueOf(sortType), sortParam));
+                return requestRepository.findAllByUserId(userId, Sort.by(Sort.Direction.valueOf(sortType), sortParam));
             else {
-                List<HelpRequest> res = new ArrayList<>();
-                Iterable<HelpRequest> fromDB = requestRepository.findAll(Sort.by(Sort.Direction.valueOf(sortType), sortParam));
+                List<Request> res = new ArrayList<>();
+                Iterable<Request> fromDB = requestRepository.findAll(Sort.by(Sort.Direction.valueOf(sortType), sortParam));
                 fromDB.iterator().forEachRemaining(res::add);
                 return res;
             }
@@ -70,19 +72,19 @@ public class RequestService {
 
     @Transactional
     public void deleteRequest(Long id) {
-        Optional<HelpRequest> receipt = requestRepository.findById(id);
+        Optional<Request> receipt = requestRepository.findById(id);
         if (!receipt.isPresent()) {
             throw new RequestNotFoundException(id);
         } else {
-            List<HelpRequestLine> lines = requestLineRepository.findRequestLinesByHelpRequest_Id(id);
+            List<RequestLine> lines = requestLineRepository.findRequestLinesById_RequestId(id);
             requestLineRepository.deleteAll(lines);
             requestRepository.deleteById(id);
         }
     }
 
-    public HelpRequest createRequest(RequestInfoDTO dto) {
-        HelpRequest request = new HelpRequest();
-        request.setClient(userService.findUserById(dto.getUserId()));
+    public Request createRequest(RequestInfoDTO dto) {
+        Request request = new Request();
+        request.setUser(userService.findUserById(dto.getUserId()));
         request.setAdmin(userService.findUserById(dto.getAdminId()));
         request.setDateCreate(LocalDate.now());
         return requestRepository.save(request);
@@ -94,15 +96,15 @@ public class RequestService {
         if (!requestRepository.findById(id).isPresent()) {
             throw new RequestNotFoundException(id);
         }
-        List<HelpRequestLine> pr = requestLineRepository.findRequestLineByHelpRequest_IdAndProduct_IdIn(id, newVal.keySet());
-        for (HelpRequestLine prod : pr) {
-            prod.setAmount(newVal.get(prod.getProductId()));
+        List<RequestLine> pr = requestLineRepository.findAllById_RequestIdAndId_ProductIdIn(id, newVal.keySet());
+        for (RequestLine prod : pr) {
+            prod.setAmount(newVal.get(prod.getId().getProductId()));
         }
         requestLineRepository.saveAll(pr);
     }
 
-    public boolean editRequestInfo(Long id, HelpRequest editedInfo, Long adminId) {
-        HelpRequest request;
+    public boolean editRequestInfo(Long id, Request editedInfo, Long adminId) {
+        Request request;
 
         if (requestRepository.findById(id).isPresent()) {
             request = requestRepository.findById(id).get();
@@ -113,16 +115,16 @@ public class RequestService {
         User user = userService.findUserById(adminId);
         request.setAdmin(user);
 
-        if (editedInfo.getClientComment().equals(request.getClientComment()) &&
+        if (editedInfo.getComment().equals(request.getComment()) &&
                 editedInfo.getAdminComment().equals(request.getAdminComment()))
             return true;
 
-        if (editedInfo.getClientComment().isEmpty())
-            request.setClientComment(null);
+        if (editedInfo.getComment().equals(""))
+            request.setComment(null);
         else
-            request.setClientComment(editedInfo.getClientComment());
+            request.setComment(editedInfo.getComment());
 
-        if (editedInfo.getAdminComment().isEmpty())
+        if (editedInfo.getAdminComment().equals(""))
             request.setAdminComment(null);
         else
             request.setAdminComment(editedInfo.getAdminComment());
@@ -143,10 +145,15 @@ public class RequestService {
             throw new InvalidData(Collections.singletonMap("amount", dto.getAmount().toString()));
         }
         Product product = productRepository.findById(dto.getId()).get();
-        HelpRequest request = requestRepository.findById(id).get();
-        HelpRequestLine pr = new HelpRequestLine();
+        Request request = requestRepository.findById(id).get();
+        RequestLineId prId = new RequestLineId();
+        prId.setRequestId(id);
+        prId.setProductId(product.getId());
+
+        RequestLine pr = new RequestLine();
+        pr.setId(prId);
         pr.setProduct(product);
-        pr.setHelpRequest(request);
+        pr.setRequest(request);
         pr.setAmount(dto.getAmount());
 
         requestLineRepository.save(pr);

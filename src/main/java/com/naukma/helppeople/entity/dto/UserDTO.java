@@ -1,18 +1,21 @@
 package com.naukma.helppeople.entity.dto;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-
 
 @Data
 @NoArgsConstructor
 public class UserDTO {
+
+    public UserDTO(UserInfoDTO dto) {
+        this.id = dto.getId();
+        this.login = dto.getLogin();
+        this.pib = dto.getPib();
+        this.phone = dto.getPhone();
+    }
 
     @NotNull
     private Long id;

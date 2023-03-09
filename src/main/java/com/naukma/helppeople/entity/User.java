@@ -1,56 +1,44 @@
 package com.naukma.helppeople.entity;
 
 import com.naukma.helppeople.entity.dto.UserDTO;
-import lombok.*;
+import com.naukma.helppeople.entity.request.Request;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Table(name = "users")
 public class User implements Serializable {
+
     @Id
+    @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "login", nullable = false, length = 255)
-    private String login;
-
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "password", nullable = false, length = 255)
-    private String password;
-
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "phone", nullable = false, length = 255)
-    private String phone;
-
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "pib", nullable = false, length = 255)
+    //FIO
+    @Column(nullable = false)
     private String pib;
 
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "role", nullable = false, length = 255)
+    @Column(nullable = false)
+    private String login;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(nullable = false)
     private String role;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "id")
-    private List<HelpRequest> requests = new ArrayList<>();
+    private List<Request> requests = new ArrayList<>();
 
 
     public User changeUser(UserDTO dto) {
@@ -64,4 +52,5 @@ public class User implements Serializable {
         }
         return this;
     }
+
 }

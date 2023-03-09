@@ -1,13 +1,17 @@
 package com.naukma.helppeople.controller;
 
-import com.naukma.helppeople.entity.*;
+import com.naukma.helppeople.entity.Product;
+import com.naukma.helppeople.entity.ReceiptLineWrapper;
+import com.naukma.helppeople.entity.User;
 import com.naukma.helppeople.entity.dto.RequestInfoDTO;
 import com.naukma.helppeople.entity.dto.RequestLineDTO;
 import com.naukma.helppeople.entity.dto.UserDTO;
+import com.naukma.helppeople.entity.request.Request;
+import com.naukma.helppeople.entity.request.RequestLine;
 import com.naukma.helppeople.exceptionHandlers.exceptions.*;
-import com.naukma.helppeople.repository.HelpRequestLineRepository;
-import com.naukma.helppeople.repository.HelpRequestRepository;
 import com.naukma.helppeople.repository.ProductRepository;
+import com.naukma.helppeople.repository.RequestLineRepository;
+import com.naukma.helppeople.repository.RequestRepository;
 import com.naukma.helppeople.repository.UserRepository;
 import com.naukma.helppeople.service.RequestService;
 import com.naukma.helppeople.service.UserService;
@@ -57,9 +61,9 @@ public class RequestController {
     private RequestService requestService;
 
     @Autowired
-    private HelpRequestRepository requestRepository;
+    private RequestRepository requestRepository;
     @Autowired
-    private HelpRequestLineRepository requestLineRepository;
+    private RequestLineRepository requestLineRepository;
 
     @ModelAttribute("userId")
     public String getCurrentUserIpn(Authentication authentication) {
@@ -155,18 +159,18 @@ public class RequestController {
             throw new RequestNotFoundException(id);
         }
 
-        HelpRequest request = requestRepository.findById(id).get();
+        Request request = requestRepository.findById(id).get();
         mav.addObject("request", request);
-        List<HelpRequestLine> lines = new ArrayList<>();
+        List<RequestLine> lines = new ArrayList<>();
         if (request.getRequestLinesList().size() != 0)
-            lines = requestLineRepository.findRequestLinesByHelpRequest_Id(id);
+            lines = requestLineRepository.findRequestLinesById_RequestId(id);
         mav.addObject("lines", lines);
         return mav;
     }
 
 
     @PutMapping("/request/info")
-    public RedirectView updateReceiptNotes(@RequestParam(value = "id") Long id, @RequestParam(value = "adminLogin") Long adminId, HelpRequest dto) {
+    public RedirectView updateReceiptNotes(@RequestParam(value = "id") Long id, @RequestParam(value = "adminLogin") Long adminId, Request dto) {
         log.info(dto);
         requestService.editRequestInfo(id, dto, adminId);
         return new RedirectView("/request/" + id + "/products");
@@ -185,7 +189,7 @@ public class RequestController {
 
     @PostMapping("/request/add")
     public RedirectView createReceipt(@ModelAttribute("request") RequestInfoDTO request) {
-        HelpRequest res = requestService.createRequest(request);
+        Request res = requestService.createRequest(request);
         log.info(res);
         return new RedirectView("/request/" + res.getId() + "/products");
     }
@@ -196,7 +200,7 @@ public class RequestController {
         if (!requestRepository.findById(id).isPresent()) {
             throw new RequestNotFoundException(id);
         }
-        HelpRequest request = requestRepository.findById(id).get();
+        Request request = requestRepository.findById(id).get();
 
         if (!userRepository.findUserById(adminLogin).isPresent()) {
             throw new UserNotFoundException(adminLogin.toString());
@@ -209,7 +213,7 @@ public class RequestController {
 
         List<String> errors = new ArrayList<>();
         List<Product> toSave = new ArrayList<>();
-        for (HelpRequestLine line : request.getRequestLinesList()) {
+        for (RequestLine line : request.getRequestLinesList()) {
             Product product = productRepository.findById(line.getProductId()).get();
             if (product.getTotalCount() - line.getAmount() < 0) {
                 errors.add("Продукту " + line.getProduct().getName() + " міститься на складі всього " +
@@ -235,7 +239,7 @@ public class RequestController {
         if (!requestRepository.findById(id).isPresent()) {
             throw new RequestNotFoundException(id);
         }
-        HelpRequest request = requestRepository.findById(id).get();
+        Request request = requestRepository.findById(id).get();
         request.setStatus("IN_PROGRESS");
 
         if (!userRepository.findUserById(adminLogin).isPresent()) {
@@ -253,7 +257,7 @@ public class RequestController {
         RequestInfoDTO request = new RequestInfoDTO();
         request.setUserId(id);
         request.setAdminId(null);
-        HelpRequest res = requestService.createRequest(request);
+        Request res = requestService.createRequest(request);
         return new RedirectView("/request/" + res.getId() + "/products");
     }
 
@@ -272,20 +276,20 @@ public class RequestController {
         if (!requestRepository.findById(id).isPresent()) {
             throw new RequestNotFoundException(id);
         }
-        if (!requestLineRepository.findRequestLineByHelpRequest_IdAndProduct_Id(id, productId).isPresent()) {
+        if (!requestLineRepository.findRequestLineById_RequestIdAndId_ProductId(id, productId).isPresent()) {
             throw new RequestProductNotFoundException(id, productId);
         }
-        HelpRequestLine pr = requestLineRepository.findRequestLineByHelpRequest_IdAndProduct_Id(id, productId).get();
+        RequestLine pr = requestLineRepository.findRequestLineById_RequestIdAndId_ProductId(id, productId).get();
         requestLineRepository.delete(pr);
 
         return new RedirectView("/request/" + id + "/products");
     }
 
-//    @DeleteMapping("/request/{id}")
-//    public RedirectView deleteReceipt(@PathVariable Long id) {
-//        requestService.deleteRequest(id);
-//        return new RedirectView("/receipt/all");
-//    }
+    @DeleteMapping("/request/{id}")
+    public RedirectView deleteReceipt(@PathVariable Long id) {
+        requestService.deleteRequest(id);
+        return new RedirectView("/receipt/all");
+    }
 
     @GetMapping("/request/{id}")
     public ModelAndView goToEditPageOfReceipt(@PathVariable Long id, Model model) {
@@ -295,7 +299,7 @@ public class RequestController {
         if (!requestRepository.findById(id).isPresent()) {
             throw new RequestNotFoundException(id);
         }
-        HelpRequest request = requestRepository.findById(id).get();
+        Request request = requestRepository.findById(id).get();
         if (request.getStatus().equals("CLOSED")) {
             throw new AccessDeniedException("Ви не можете редагувати заявку, що вже закрита");
         }
@@ -303,8 +307,8 @@ public class RequestController {
 
         ArrayList<RequestLineDTO> lines = new ArrayList<>();
         if (request.getRequestLinesList().size() != 0) {
-            List<HelpRequestLine> res = requestLineRepository.findRequestLinesByHelpRequest_Id(id);
-            for (HelpRequestLine line : res) {
+            List<RequestLine> res = requestLineRepository.findRequestLinesById_RequestId(id);
+            for (RequestLine line : res) {
                 RequestLineDTO dto = new RequestLineDTO(line.getProduct().getId(),
                         line.getProduct().getGender(),
                         line.getProduct().getCategory().getName(),
@@ -319,8 +323,8 @@ public class RequestController {
         RequestLineDTO newProduct = new RequestLineDTO();
 
         List<Product> products = productRepository.findProductsByTotalCountGreaterThan(0);
-        List<Long> productsInOrder = requestLineRepository.findRequestLinesByHelpRequest_Id(id).stream()
-                .map(HelpRequestLine::getProductId).collect(Collectors.toList());
+        List<Long> productsInOrder = requestLineRepository.findRequestLinesById_RequestId(id).stream()
+                .map(RequestLine::getProductId).collect(Collectors.toList());
         products.removeIf(x -> productsInOrder.contains(x.getId()));
 
         model.addAttribute("products", products);

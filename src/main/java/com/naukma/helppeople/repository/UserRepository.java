@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
-
     Optional<User> findByLogin(String login);
 
     Optional<User> findByPhone(String phone);
@@ -28,4 +27,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
                     "FROM user " +
                     "WHERE id = :id")
     UserInfoDTO findUserDtoById(@Param("id") Long id);
+
 }

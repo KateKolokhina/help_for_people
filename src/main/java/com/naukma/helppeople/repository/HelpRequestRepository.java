@@ -1,9 +1,7 @@
 package com.naukma.helppeople.repository;
 
-import com.naukma.helppeople.entity.Category;
 import com.naukma.helppeople.entity.HelpRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
