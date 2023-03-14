@@ -24,7 +24,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query(nativeQuery = true,
             value = "SELECT id, login, password, role , pib, phone " +
-                    "FROM user " +
+                    "FROM users " +
                     "WHERE id = :id")
     UserInfoDTO findUserDtoById(@Param("id") Long id);
 
