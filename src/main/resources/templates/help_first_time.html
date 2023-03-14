@@ -23,32 +23,34 @@
 
 <main role="main">
     <div class="d-flex justify-content-center align-items-center">
-        <div class="row" style="width: 60%">
+        <div class="row" style="width: 80%">
             <div class="col-md-12">
                 <div class="card w-100 my-4">
                     <div class="card-header bg-light text-info">
                         <h4 class="text-center">Як отримати допомогу? </h4>
                     </div>
-                    <div class="card-body" style="width:auto">
+                    <div class="card-body mx-3" style="width:auto">
                         <div class="row">
                             <p>Для того, щоб оформити заявку на допомогу і мати змогу відслідкувати її статус,
-                                Вам потрібно зареєструватись у нашій системі. <br>
+                                Вам потрібно зареєструватись у нашій системі. </p>
                                 Форма рєестрації розміщена знизу.
-                                <br>
+                            <p>
                                 Після успішної реєстрації Ви побачите вже створену заявку, яку Вам потрібно лише
                                 наповнити потрібними речами.
-                                <br>
+                            </p>
+                            <p>
                                 Запомʼятайте пароль, який Ви придумали, лише з його допомогою Ви зможете увійти у
                                 систему, щоб перевірити статус вашої заявки.
-                                <br>
+                        </p>
+                            <p>
                                 <b>Якщо Ви вже зареєструвались, для подання нової заяви увійдіть до панелі користувача
                                     та виберіть у меню "Заявки". Після цього натисність "Створити нову".
                                 </b>
                             </p>
                         </div>
-                        <div class="row">
+                        <div class="row text-left">
                             <form action="#" th:action="@{'/registrationForHelp'}" th:object="${user}"
-                                  th:method="post" onsubmit="return validate(this);" style="width:90% ">
+                                  th:method="post" onsubmit="return validate(this);" style="width:100% ">
 
                                 <div class="row">
                                     <div class="col m-2">ПІБ :</div>
@@ -79,8 +81,8 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col m-2">Пароль:</div>
+                                <div class="row ">
+                                    <div class="col m-2 ">Пароль:</div>
                                     <div class="col m-2"><input style="width: 100%" id="form-password" type="password"
                                                                 th:field="*{password}"
                                                                 name="password"/></div>
@@ -100,6 +102,7 @@
                                             value="Далі"
                                     />
                                 </div>
+
                             </form>
                         </div>
                     </div>
