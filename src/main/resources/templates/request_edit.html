@@ -173,14 +173,14 @@
 
                                     <td th:text="${propertyItem.category}"/>
 
-                                    <td th:if="${ line.getProduct().getSeason() == null}" th:text="-----"/>
-                                    <td th:if="${ line.getProduct().getSeason() != null && line.getProduct().getSeason().equals('Winter')}"
+                                    <td th:if="${ propertyItem.season == null}" th:text="-----"/>
+                                    <td th:if="${ propertyItem.season != null && propertyItem.season.equals('Winter')}"
                                         th:text="Зима"/>
-                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Autumn')}"
+                                    <td th:if="${ propertyItem.season != null &&  propertyItem.season.equals('Autumn')}"
                                         th:text="Осінь"/>
-                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Summer')}"
+                                    <td th:if="${ propertyItem.season != null &&  propertyItem.season.equals('Summer')}"
                                         th:text="Літо"/>
-                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Spring')}"
+                                    <td th:if="${ propertyItem.season != null && propertyItem.season.equals('Spring')}"
                                         th:text="Весна"/>
 
                                     <td th:if="${propertyItem.season ==null}" th:text="----"

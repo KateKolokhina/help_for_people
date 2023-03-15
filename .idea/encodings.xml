@@ -9,7 +9,6 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/templates/navbar.html" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/main/resources/templates/request_all.html" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/main/resources/templates/request_create.html" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/templates/request_edit.html" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/main/resources/templates/request_products.html" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/main/resources/templates/user.html" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/main/resources/templates/where_find.html" charset="windows-1251" />

@@ -2,21 +2,21 @@ package com.naukma.helppeople.service;
 
 import com.naukma.helppeople.entity.Category;
 import com.naukma.helppeople.entity.Product;
+import com.naukma.helppeople.entity.User;
 import com.naukma.helppeople.repository.CategoryRepository;
 import com.naukma.helppeople.repository.ProductRepository;
+import com.naukma.helppeople.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class DefaultDataGenerator implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
-
-    public DefaultDataGenerator(CategoryRepository categoryRepository, ProductRepository productRepository) {
-        this.categoryRepository = categoryRepository;
-        this.productRepository = productRepository;
-    }
+    private final UserRepository userRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -51,6 +51,22 @@ public class DefaultDataGenerator implements CommandLineRunner {
         product2.setTotalCount(30);
         product2.setCategory(category2);
         productRepository.save(product2);
+
+        User admin = new User();
+        admin.setLogin("admin@gmail.com");
+        admin.setPassword("$2a$10$MRGJAmBFcspvs/lhud2r5.QD7FKUO29eKdfTWfV/6bjfFb6YGQbDi");
+        admin.setRole("ADMIN");
+        admin.setPib("admin");
+        admin.setPhone("+100000000");
+        userRepository.save(admin);
+
+        User user = new User();
+        user.setLogin("at.cat.smile@gmail.com");
+        user.setPassword("$2a$10$MRGJAmBFcspvs/lhud2r5.QD7FKUO29eKdfTWfV/6bjfFb6YGQbDi");
+        user.setRole("USER");
+        user.setPib("Ткаченко Андрій Тарасович");
+        user.setPhone("+380961581077");
+        userRepository.save(user);
     }
 }
 
