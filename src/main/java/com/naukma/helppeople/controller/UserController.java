@@ -80,7 +80,7 @@ public class UserController {
     @GetMapping("/user/edit/{id}")
     public ModelAndView showEditUser(@PathVariable Long id) {
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("user_edit");
+        mav.setViewName("user_profile_edit");
         UserDTO user = new UserDTO(userRepository.findUserDtoById(id));
         if (!userRepository.findUserById(id).isPresent()) {
             throw new UserNotFoundException(id.toString());
