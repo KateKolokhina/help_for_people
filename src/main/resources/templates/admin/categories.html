@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>SHH | Створення продукту </title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    </head>
+
+    <body style="padding-top: 100px">
+        <div th:replace="admin/admin_navbar :: admin_navbar"></div>
+
+        <main role="main">
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="row" style="width: 80%">
+                    <div th:if="${#lists.isEmpty(categories)}" class="col-12">
+                        <h3 class="text-center mt-4">Немає категорій</h3>
+                    </div>
+                    <div th:unless="${#lists.isEmpty(categories)}" class="col-12">
+
+                        <h3 class="text-center mt-4">Категорії продуктів</h3>
+
+                        <div class="card mt-4">
+
+                            <div class="card-body pb-0 pt-0">
+                                <div class="row">
+                                    <div class="col-5 py-3 border-end">
+                                        <h6 class="card-text">Назва</h6>
+                                    </div>
+                                    <div class="col-5 py-3 border-end">
+                                        <h6 class="card-text">Тип</h6>
+                                    </div>
+                                    <div class="col-2 py-3">
+                                        <h6 class="card-text">Змінити/Видалити</h6>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div th:each="category: ${categories}" class="card-body border-top pb-0 pt-0">
+                                <div class="row">
+                                    <div class="col-5 py-3 border-end">
+                                        <div class="d-flex h-100 align-items-center">
+                                            <h6 class="card-text" th:text="${category.name}"></h6>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-5 py-3 border-end">
+                                        <div class="d-flex h-100 align-items-center">
+                                            <h6 class="card-text" th:text="${category.type}"></h6>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2 py-3">
+                                        <a type="button" class="btn btn-warning btn-block btn-sm" th:href="${'/admin/category/edit/show?id='+category.id}">Змінити</a>
+                                        <a type="button" class="btn btn-danger btn-block btn-sm" th:href="${'/admin/category/delete?id='+category.id}">Видалити</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.1/cjs/popper.min.js" integrity="sha256-T3bYsIPyOLpEfeZOX4M7J59ZoDMzuYFUsPiSN3Xcc2M=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    </body>
+</html>

@@ -3,6 +3,8 @@ package com.naukma.helppeople.service;
 import com.naukma.helppeople.entity.Category;
 import com.naukma.helppeople.entity.Product;
 import com.naukma.helppeople.entity.dto.ProductAddDTO;
+import com.naukma.helppeople.entity.dto.ProductDTO;
+import com.naukma.helppeople.entity.dto.ProductShowDTO;
 import com.naukma.helppeople.exceptionHandlers.exceptions.CategoryNotFoundException;
 import com.naukma.helppeople.exceptionHandlers.exceptions.EntityDuplicateException;
 import com.naukma.helppeople.exceptionHandlers.exceptions.ProductNotFoundException;
@@ -13,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -111,5 +116,82 @@ public class ProductService {
             res.setTotalCount(dto.getTotalCount());
 
         return res;
+    }
+
+
+
+
+
+
+
+
+
+
+    public void deleteById(Long id) {
+        productRepository.deleteById(id);
+    }
+
+
+    public void createProduct(String name, String gender, String season, Integer size, Integer count, Long category) {
+
+        Category c = categoryRepository.findById(category).orElseThrow(() ->  new CategoryNotFoundException(category));
+        if (name == null || name.isEmpty()) throw new RuntimeException("Empty name");
+        if (gender == null || !gender.matches("F|M|K")) throw new RuntimeException("Invalid or empty gender");
+        if (season == null || !season.matches("Autumn|Winter|Spring|Summer")) throw new RuntimeException("Invalid or empty season");
+        if (size == null || size < 0) throw new RuntimeException("Invalid or negative size");
+        if (count == null || count < 0) throw new RuntimeException("Invalid or negative count");
+
+        Product product = new Product();
+
+        product.setName(name);
+        product.setGender(gender);
+        product.setSeason(season);
+        product.setSize(size);
+        product.setTotalCount(count);
+        product.setCategory(c);
+
+        productRepository.save(product);
+    }
+
+    public void updateProduct(long id, String name, String gender, String season, Integer size, Integer count, Long category) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("-1L"));
+        Category c = categoryRepository.findById(category).orElseThrow(() ->  new CategoryNotFoundException(category));
+        if (name == null || name.isEmpty()) throw new RuntimeException("Empty name");
+        if (gender == null || !gender.matches("F|M|K")) throw new RuntimeException("Invalid or empty gender");
+        if (season == null || !season.matches("Autumn|Winter|Spring|Summer")) throw new RuntimeException("Invalid or empty season");
+        if (size == null || size < 0) throw new RuntimeException("Invalid or negative size");
+        if (count == null || count < 0) throw new RuntimeException("Invalid or negative count");
+
+        product.setName(name);
+        product.setGender(gender);
+        product.setSeason(season);
+        product.setSize(size);
+        product.setTotalCount(count);
+        product.setCategory(c);
+
+        productRepository.save(product);
+    }
+
+
+    public List<Product> findProducts(String nameQuery, Long category, String gender, String season) {
+        return productRepository.findProducts(nameQuery, category, gender, season);
+    }
+
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
+    }
+
+    public ProductShowDTO toDTO(Product product) {
+        ProductShowDTO dto = new ProductShowDTO();
+
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setGender(product.getGender());
+        dto.setSeason(product.getSeason());
+        dto.setSize(product.getSize());
+        dto.setTotalCount(product.getTotalCount());
+        dto.setCategoryName(product.getCategory().getName());
+
+        return dto;
     }
 }

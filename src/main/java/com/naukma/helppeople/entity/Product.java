@@ -1,7 +1,6 @@
 package com.naukma.helppeople.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -12,6 +11,9 @@ import java.io.Serializable;
 @Entity
 @Data
 @NoArgsConstructor
+@Getter
+@Setter
+//@Builder
 @Table(name = "product")
 public class Product implements Serializable {
 
