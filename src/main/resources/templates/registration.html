@@ -34,14 +34,14 @@
                               th:method="post" onsubmit="return validate(this);" style="width:90% ">
 
                             <div class="row">
-                                <div class="col m-2">ПІБ :</div>
+                                <div class="col m-2">ПІБ<span style="color: red;">*</span>:</div>
                                 <div class="col m-2"><input style="width: 100%" required id="form-pib" type="text"
                                                             th:field="*{pib}"
                                                             name="pib"/></div>
                             </div>
 
                             <div class="row">
-                                <div class="col m-2 ">Логін: (електрона пошта або номер телефону у форматі
+                                <div class="col m-2 ">Логін<span style="color: red;">*</span>: (електрона пошта або номер телефону у форматі
                                     +(123)4567890):
                                 </div>
                                 <div class="col m-2"><input style="width: 100%" required id="form-login" type="text"
@@ -51,25 +51,13 @@
                             </div>
 
                             <div class="row">
-                                <div class="col m-2 ">Телефон: (у форматі +(123)4567890 )</div>
-                                <div class="col m-2"><input style="width: 100%" id="form-telephone" type="tel"
-                                                            pattern="^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[\s\./0-9]*$"
-                                                            th:field="*{phone}"
-                                                            minlength="12"
-                                                            maxlength="15"
-                                                            required
-                                                            name="telephone"/>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col m-2">Пароль:</div>
+                                <div class="col m-2">Пароль<span style="color: red;">*</span>:</div>
                                 <div class="col m-2"><input style="width: 100%" id="form-password" type="password"
                                                             th:field="*{password}"
                                                             name="password"/></div>
                             </div>
                             <div class="row">
-                                <div class="col m-2 ">Підтвердити пароль:</div>
+                                <div class="col m-2 ">Підтвердити пароль<span style="color: red;">*</span>:</div>
                                 <div class="col m-2"><input style="width: 100%" id="form-password-repeat"
                                                             type="password"
                                                             name="password-repeat"/></div>

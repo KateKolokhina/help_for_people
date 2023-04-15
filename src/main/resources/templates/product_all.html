@@ -58,9 +58,9 @@
                                     <td th:text="${product.getId()}"/>
                                     <td th:text="${product.getName()}"/>
 
-                                    <td th:if="${product.getGender().equals('F')}" th:text="Жіноч"/>
-                                    <td th:if="${product.getGender().equals('M')}" th:text="Чолов"/>
-                                    <td th:if="${product.getGender().equals('K')}" th:text="Дитяч"/>
+                                    <td th:if="${product.getGender().equals('F')}" th:text="Ж"/>
+                                    <td th:if="${product.getGender().equals('M')}" th:text="Ч"/>
+                                    <td th:if="${product.getGender().equals('K')}" th:text="Дит"/>
 
                                     <td th:text="${product.getCategory().getName()}"/>
 

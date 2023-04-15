@@ -15,7 +15,21 @@
         <div th:if="${currentUser != null}" class="collapse navbar-collapse" id="navbarSupportedContent2">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
+                    <a class="nav-link" href="/request/all">Заявки</a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link" th:href="'/user/'+${userId}">Профіль</a>
+                </li>
+
+                <li class="nav-item"
+                    th:if="${('ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()))} ">
+                    <a class="nav-link" href="/category/all">Категорії</a>
+                </li>
+
+                <li class="nav-item"
+                    th:if="${('ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()))} ">
+                    <a class="nav-link" href="/product/all">Товари</a>
                 </li>
 
                 <li class="nav-item"
@@ -33,17 +47,6 @@
                     <a class="nav-link" href="/donate">Як підтримати</a>
                 </li>
 
-                <li class="nav-item"
-                    th:if="${('ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()))} ">
-                    <a class="nav-link" href="/category/all">Категорії</a>
-                </li>
-                <li class="nav-item"
-                    th:if="${('ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()))} ">
-                    <a class="nav-link" href="/product/all">Товари</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/request/all">Заявки</a>
-                </li>
             </ul>
 
             <div>

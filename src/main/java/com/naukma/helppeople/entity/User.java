@@ -31,7 +31,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column()
     private String phone;
 
     @Column(nullable = false)

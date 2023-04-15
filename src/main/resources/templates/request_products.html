@@ -111,9 +111,9 @@
                                     </td>
                                     <td th:text="${line.getProduct().getId()}"/>
 
-                                    <td th:if="${line.getProduct().getGender().equals('F')}" th:text="Жіноч"/>
-                                    <td th:if="${line.getProduct().getGender().equals('M')}" th:text="Чолов"/>
-                                    <td th:if="${line.getProduct().getGender().equals('K')}" th:text="Дитяч"/>
+                                    <td th:if="${line.getProduct().getGender().equals('F')}" th:text="Ж"/>
+                                    <td th:if="${line.getProduct().getGender().equals('M')}" th:text="Ч"/>
+                                    <td th:if="${line.getProduct().getGender().equals('K')}" th:text="Дит"/>
 
                                     <td th:text="${line.getProduct().getCategory().getName()}"/>
 

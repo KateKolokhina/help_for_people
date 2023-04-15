@@ -22,7 +22,7 @@
 </div>
 
 <main role="main">
-    <div class="container-flew mx-4">
+    <div class="container-flex mx-4">
         <div class="row">
             <div class="col-md-12">
 
@@ -47,56 +47,55 @@
                             Мої заявки </h4>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <form th:action="@{/request/all}" method="get" class="my-4">
-                                <div class="row">
-                                    <div class="col m-2">
-                                        <div class="form-group">
-                                            <select class="form-select" name="sortParam" id="exampleFormControlSelect1"
-                                                    required>
-                                                <option value="" th:selected="${sortParam==null}">Параметр сортування
-                                                </option>
-                                                <option value="id" th:selected="${sortParam=='id'}">Номер</option>
-                                                <option value="user" th:selected="${sortParam=='user'}">Замовник
-                                                </option>
-                                                <option value="dateCreate" th:selected="${sortParam=='dateCreate'}">Дата
-                                                    створення
-                                                </option>
-                                                <option value="status" th:selected="${sortParam=='status'}">Статус
-                                                </option>
-                                                <th></th>
-                                                <th></th>
-                                                <th th:if="${ currentUser!=null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}">
-                                                </th>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col m-2">
-                                        <div class="form-group form-check-inline ">
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="option1" name="sortType"
-                                                       class="custom-control-input"
-                                                       value="ASC" th:checked="${sortType==null || sortType=='ASC'}">
-                                                <label class="custom-control-label" for="option1">ASC</label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="option2" name="sortType"
-                                                       class="custom-control-input"
-                                                       value="DESC" th:checked="${sortType=='DESC'}">
-                                                <label class="custom-control-label" for="option2">DESC</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col m-2">
-                                        <button type="submit" class="btn btn-info">Cортувати</button>
-                                    </div>
-                                    <div class="col m-2">
-                                        <a class="btn btn-primary" href="/request/all" role="button">Очистити</a>
+
+                        <form th:action="@{/request/all}" method="get" class="my-4">
+                            <div class="d-flex justify-content-start">
+                                <div class="p-2 ">
+                                    <div class="form-group">
+                                        <select class="form-select" name="sortParam" id="exampleFormControlSelect1"
+                                                required>
+                                            <option value="" th:selected="${sortParam==null}">Параметр сортування
+                                            </option>
+                                            <option value="id" th:selected="${sortParam=='id'}">Номер</option>
+                                            <option value="user" th:selected="${sortParam=='user'}">Замовник
+                                            </option>
+                                            <option value="dateCreate" th:selected="${sortParam=='dateCreate'}">Дата
+                                                створення
+                                            </option>
+                                            <option value="status" th:selected="${sortParam=='status'}">Статус
+                                            </option>
+                                            <th></th>
+                                            <th></th>
+                                            <th th:if="${ currentUser!=null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}">
+                                            </th>
+                                        </select>
                                     </div>
                                 </div>
-                            </form>
+                                <div class="p-2 ">
+                                    <div class="form-group form-check-inline">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="option1" name="sortType"
+                                                   class="custom-control-input"
+                                                   value="ASC" th:checked="${sortType==null || sortType=='ASC'}">
+                                            <label class="custom-control-label" for="option1">За зрост.</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="option2" name="sortType"
+                                                   class="custom-control-input"
+                                                   value="DESC" th:checked="${sortType=='DESC'}">
+                                            <label class="custom-control-label" for="option2">За спад.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-2">
+                                    <button type="submit" class="btn btn-info">Cортувати</button>
+                                </div>
+                                <div class="p-2">
+                                    <a class="btn btn-primary" href="/request/all" role="button">Очистити</a>
+                                </div>
+                            </div>
+                        </form>
 
-                        </div>
 
                         <div class="card-body">
                             <div th:if="${requests.size() == 0 }">
