@@ -70,7 +70,7 @@ public class UserService {
         }
         User userNewLogin = findUserByLogin(userNew.getLogin());
 
-        if (userNewLogin != null && !userNew.getLogin().equals(userNew.getOldLogin())) {
+        if (userNewLogin != null && !userNewLogin.getId().equals(id)) {
             throw new EntityDuplicateException("Користувач", "login", userNew.getLogin());
         }
         User user = userRepository.findUserById(id).get();

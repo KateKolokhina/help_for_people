@@ -55,17 +55,28 @@
                             <p th:if="${currentUser != null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())}"
                                th:text="${'Контактний телефон: '+ request.getUser().getPhone() }"></p>
 
-                            <p th:text="${'Дата створення: '+ request.getDateCreate() }"></p>
+                            <b>Дата створення:</b>
+                            <p th:text="${request.getDateCreate()}"></p>
+                            <b th:if="${request.getDateClosed() != null}">Дата закриття:</b>
                             <p th:if="${request.getDateClosed() != null}"
-                               th:text="${'Дата закриття: '+ request.getDateClosed() }"></p>
+                               th:text="${request.getDateClosed() }"></p>
+                            <b>Примітки:</b>
+                            <p th:text="${request.getComment() }"></p>
+                            <b>Примітки від адміністратора:</b>
+                            <p th:text="${request.getAdminComment() }"></p>
 
-                            <p th:text="${'Примітки: '+ request.getComment() }"></p>
-
-                            <p th:text="${'Примітки від адміністратора: '+ request.getAdminComment() }"></p>
-
-                            <p th:if="${request.getStatus().equals('OPEN')}">Статус - Створено </p>
-                            <p th:if="${request.getStatus().equals('IN_PROGRESS')}">Статус - В роботі</p>
-                            <p th:if="${request.getStatus().equals('CLOSED')}">Статус - Завершено</p>
+                            <p th:if="${request.getStatus().equals('OPEN')}"><b>Статус:</b>
+                                <button type="button" class="btn btn-success btn-sm" disabled>Створено
+                                </button>
+                            </p>
+                            <p th:if="${request.getStatus().equals('IN_PROGRESS')}"><b>Статус:</b>
+                                <button type="button" class="btn btn-primary btn-sm" disabled>В роботі
+                                </button>
+                            </p>
+                            <p th:if="${request.getStatus().equals('CLOSED')}"><b>Статус:</b>
+                                <button type="button" class="btn btn-secondary btn-sm" disabled>Завершено
+                                </button>
+                            </p>
 
                             <p th:if="${currentUser != null && request.getAdmin() == null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString()) }"
                                th:text="${'Востаннє змінено адміністратором: '}"></p>
@@ -118,10 +129,14 @@
                                     <td th:text="${line.getProduct().getCategory().getName()}"/>
 
                                     <td th:if="${ line.getProduct().getSeason() == null}" th:text="-----"/>
-                                    <td th:if="${ line.getProduct().getSeason() != null && line.getProduct().getSeason().equals('Winter')}" th:text="Зима"/>
-                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Autumn')}" th:text="Осінь"/>
-                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Summer')}" th:text="Літо"/>
-                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Spring')}" th:text="Весна"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null && line.getProduct().getSeason().equals('Winter')}"
+                                        th:text="Зима"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Autumn')}"
+                                        th:text="Осінь"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Summer')}"
+                                        th:text="Літо"/>
+                                    <td th:if="${ line.getProduct().getSeason() != null &&  line.getProduct().getSeason().equals('Spring')}"
+                                        th:text="Весна"/>
 
                                     <td th:text="${line.getProduct().getSize()}"/>
 

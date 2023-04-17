@@ -18,7 +18,7 @@
               <div class="card-header bg-light text-info">
                 <h4 class="text-center m-0">Редагування профілю</h4>
               </div>
-              <form class="card-body p-3" action="/user/profile/edit">
+              <form class="card-body p-3"  th:object="${user}" method="post" th:action="'/user/edit/' + ${user.getId()}">
 
 
                 <div class="row mb-3">

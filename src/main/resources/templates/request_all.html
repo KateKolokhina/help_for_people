@@ -137,9 +137,18 @@
                                         <td th:if="${currentUser!=null && 'ADMIN'.equals(currentUser.getAuthorities().toArray()[0].toString())
                                         && request.getAdmin() != null}"
                                             th:text="${request.getAdmin().getLogin()}"/>
-                                        <td th:if="${request.getStatus().equals('OPEN')}">Створено</td>
-                                        <td th:if="${request.getStatus().equals('IN_PROGRESS')}">В роботі</td>
-                                        <td th:if="${request.getStatus().equals('CLOSED')}">Завершено</td>
+                                        <td th:if="${request.getStatus().equals('OPEN')}">
+                                            <button type="button" class="btn btn-success btn-sm" disabled>Створено
+                                            </button>
+                                        </td>
+                                        <td th:if="${request.getStatus().equals('IN_PROGRESS')}">
+                                            <button type="button" class="btn btn-primary btn-sm" disabled>В роботі
+                                            </button>
+                                        </td>
+                                        <td th:if="${request.getStatus().equals('CLOSED')}">
+                                            <button type="button" class="btn btn-secondary btn-sm" disabled>Завершено
+                                            </button>
+                                        </td>
                                         <td>
                                             <form class="mx-2" action="#"
                                                   th:if="${currentUser!=null}"

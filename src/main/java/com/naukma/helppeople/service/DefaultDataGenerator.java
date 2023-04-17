@@ -23,13 +23,13 @@ public class DefaultDataGenerator implements CommandLineRunner {
         // Generate default data for Category entity
         Category category1 = new Category();
         category1.setName("Clothing");
-        category1.setType("Apparel");
+        category1.setType("CLO");
         category1.setSeasonIsNeed(true);
         categoryRepository.save(category1);
 
         Category category2 = new Category();
         category2.setName("Shoes");
-        category2.setType("Footwear");
+        category2.setType("SHO");
         category2.setSeasonIsNeed(false);
         categoryRepository.save(category2);
 

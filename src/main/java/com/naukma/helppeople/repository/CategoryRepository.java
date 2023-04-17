@@ -21,14 +21,14 @@ public interface CategoryRepository extends CrudRepository<Category, Long> {
     Optional<Category> findByName(String name);
 
     @Query(nativeQuery = true,
-            value = "SELECT c.id, c.name, c.type, c.season_is_need AS season, COUNT(product.id) AS amount " +
+            value = "SELECT c.id, c.name, c.type, c.seasonisneed  AS season, COUNT(product.id) AS amount " +
                     "FROM category c " +
                     "LEFT JOIN product ON c.id = product.category_id " +
                     "GROUP BY c.id")
     List<CategoryDTO> getCategoriesInformation();
 
     @Query(nativeQuery = true,
-            value = "SELECT c.id, c.name,c.type,c.season_is_need AS season, COUNT(product.id) AS amount " +
+            value = "SELECT c.id, c.name,c.type,c.seasonisneed  AS season, COUNT(product.id) AS amount " +
                     "FROM category c " +
                     "LEFT JOIN product ON c.id = product.category_id " +
                     "WHERE c.id = :catId " +

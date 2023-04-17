@@ -89,7 +89,7 @@ public class UserController {
         return mav;
     }
 
-    @PutMapping("/user/edit/{id}")
+    @PostMapping("/user/edit/{id}")
     public RedirectView editUser(@PathVariable Long id, @ModelAttribute("userNew") UserDTO user) {
         log.info(user);
         if (!userRepository.findUserById(id).isPresent()) {
